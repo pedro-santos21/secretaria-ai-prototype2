@@ -16,3 +16,4 @@ React Snap, React Helmet, React Router Sitemap // SEO
 React GA (Google Analytics) // Analytics
 Jest // Testing
  
+**FIGMA DESIGN FILE:** https://www.figma.com/file/VSZXnoDaERu1a43HKibcsc/secretaria.ai?type=whiteboard&node-id=0%3A1&t=1a1IPdBMggRYgfZ4-1
