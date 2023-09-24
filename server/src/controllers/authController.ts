@@ -18,16 +18,6 @@ interface RegisterRequest {
 const register = async (req: RegisterRequest, res: any) => {
   // Register user
   console.log("Register request")
-  // Sanitize inputs
-  await body('name').trim().escape().run(req);
-  await body('email').trim().escape().normalizeEmail().isEmail().run(req);
-  await body('password').trim().escape().run(req);
-
-  // Validate inputs
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
 
   const { name, email, password } = req.body;
 
@@ -75,17 +65,6 @@ interface LoginRequest {
 const login = async (req: LoginRequest, res: any) => {
     // Login user
     console.log("Login request")
-
-    // Sanitize inputs
-    await body('username').trim().escape().run(req);
-    await body('password').trim().escape().run(req);
-
-    // Validate inputs
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
     try {
         const { username, password } = req.body;
 
