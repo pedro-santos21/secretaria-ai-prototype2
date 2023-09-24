@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "express-validator": "^7.0.1",
+    "joi": "^17.10.2"
+  }
+}
