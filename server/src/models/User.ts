@@ -20,9 +20,14 @@ const UserSchema = new Schema({
     email: {type: String, required:true, unique:true},
     username : {type: String, unique: true, required:true},
 });
-  
+
+
+// Documentation: https://www.npmjs.com/package/passport-local-mongoose
+
+const passportOptions = {};
+
 // plugin for passport-local-mongoose
-UserSchema.plugin(passportLocalMongoose);
+UserSchema.plugin(passportLocalMongoose, passportOptions);
   
 // export userschema
 module.exports = mongoose.model("User", UserSchema);

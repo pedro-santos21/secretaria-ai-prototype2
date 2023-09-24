@@ -1,9 +1,12 @@
-const passport = require('passport');
+// importing modules 
+const express = require('express'); 
+const router = express.Router(); 
 
-const User = require('../models/User');
+// Import the controller for this route
+const controller = require('../controllers/authController');
 
-// CHANGE: USE "createStrategy" INSTEAD OF "authenticate"
-passport.use(User.createStrategy());
+// Define the routes
+router.get('/register', controller.register);
+router.get('/register', controller.login);
 
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
+module.exports = router;

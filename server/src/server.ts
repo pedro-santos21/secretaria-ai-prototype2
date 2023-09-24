@@ -5,10 +5,11 @@ const router = express.Router()
 // 3rd party Imports
 import mongoose from "mongoose";
 import cors from "cors";
-import passport from "passport";
 require('dotenv').config()
 const helmet = require('helmet')
 const session = require('express-session')
+import passport from "passport";
+const passportJWT = require("passport-jwt");
 
 const app = express();
 const path = require('path');
@@ -18,8 +19,13 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 app.use(helmet());
+app.use(express.urlencoded({ extended: true }));
+
+//// Passport
 app.use(passport.initialize());
 app.use(passport.session());
+
+//// Sessions
 app.use(
   session({
   secret: 'illuminati-party', //pick a random string to make the hash that is generated secure
@@ -42,14 +48,19 @@ async function connectToDatabase() {
 }
 
 // Routes
-app.use('/', express.static(path.join(__dirname, 'public')))
-app.use('/', require('./routes/root'))
-app.use('/users', require('.routes/userRoutes'))
+const publicDir = path.join(__dirname, 'public')
+app.use('/', express.static(publicDir))
 
+//app.use('/', require('./routes/root'))
+//app.use('/users', require('./routes/userRoute'))
+app.use('/auth', require('./routes/authRoute'))
+
+// Other code
 app.get("/", (req, res) => {
     res.send("Hello World!");
 });
 
+// Start server
 app.listen(port, () => {
    console.info(`Backend server is listening on http://localhost:${port}`);
  });
