@@ -10,15 +10,18 @@ dotenv.config()
 const helmet = require('helmet')
 const session = require('express-session')
 const passport = require('passport')
-const winston = require('winston');
-
 
 // My Imports
-require("./config/rsa").setupRSAKeyPaths().then(() => {
-  require('./config/passport')(passport);
-})
-import { printMongooseState, startMongo } from "./config/database"
 require('./models/User');
+
+async function authSetup() {
+  await require("./config/rsa").setupRSAKeyPaths();
+  require('./config/passport')(passport);
+} authSetup();
+
+import { printMongooseState, startMongo } from "./config/database"
+
+// const logger = require('./config/logging').SetupWinstonLogger(); [NOTE: FIX THIS LATER AND SET THIS UP!!!!!!!!!!!11]
 
 const app = express();
 const path = require('path');

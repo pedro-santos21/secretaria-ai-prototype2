@@ -26,7 +26,8 @@
     "passport-local": "^1.0.0",
     "passport-local-mongoose": "^8.0.0",
     "react-router-dom": "^6.16.0",
-    "winston": "^3.10.0"
+    "winston": "^3.10.0",
+    "winston-daily-rotate-file": "^4.7.1"
   },
   "devDependencies": {
     "@types/cors": "^2.8.14",
