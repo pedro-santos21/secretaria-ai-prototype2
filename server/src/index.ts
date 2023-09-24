@@ -8,6 +8,7 @@ import cors from "cors";
 import passport from "passport";
 require('dotenv').config()
 const helmet = require('helmet')
+const session = require('express-session')
 
 const app = express();
 const path = require('path');
@@ -19,11 +20,19 @@ app.use(express.json());
 app.use(helmet());
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(
+  session({
+  secret: 'illuminati-party', //pick a random string to make the hash that is generated secure
+  resave:false,
+  saveUnitialized:true
+}))
+app.use(function(req, res, next) {
+  console.log('Session:', req.session);
+  next();
+});
 
 // Security
 app.disable('x-powered-by') // Reduce fingerpinting
-
-/// Passport.js
 
 // Database
 connectToDatabase().catch(err => console.log(err))
