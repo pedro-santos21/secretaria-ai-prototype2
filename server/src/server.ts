@@ -6,10 +6,14 @@ const router = express.Router()
 import mongoose from "mongoose";
 import cors from "cors";
 const bodyParser = require("body-parser");
-require('dotenv').config()
+const dotenv = require('dotenv')
+dotenv.config()
 const helmet = require('helmet')
 const session = require('express-session')
 const passport = require('passport')
+
+// My Imports
+import { startMongo } from "./config/database"
 
 const app = express();
 const path = require('path');
@@ -37,18 +41,13 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.disable('x-powered-by') // Reduce fingerpinting
 
 // Database
-connectToDatabase().catch(err => console.log(err))
-async function connectToDatabase() {
-    await mongoose.connect(<string>process.env.MONGODB_KEY);
-    console.log("+ Connected to MongoDB");
-}
+startMongo();
 
 // Routes
 const publicDir = path.join(__dirname, 'public')
 app.use('/', express.static(publicDir))
 
 //app.use('/', require('./routes/root'))
-//app.use('/users', require('./routes/userRoute'))
 app.use('/api/auth', require('./routes/authRoute'))
 app.use('/api/user', require('./routes/userRoute'))
 
