@@ -9,8 +9,7 @@ const bodyParser = require("body-parser");
 require('dotenv').config()
 const helmet = require('helmet')
 const session = require('express-session')
-import passport from "passport";
-const passportJWT = require("passport-jwt");
+const passport = require('passport')
 
 const app = express();
 const path = require('path');
@@ -29,7 +28,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 //// Sessions
 /*app.use(
   session({
-  secret: 'illuminati-party', //pick a random string to make the hash that is generated secure
+  secret: process.env.SESSION_SECRET, //pick a random string to make the hash that is generated secure
   resave:false,
   saveUninitialized:true
 }))*/
@@ -51,6 +50,7 @@ app.use('/', express.static(publicDir))
 //app.use('/', require('./routes/root'))
 //app.use('/users', require('./routes/userRoute'))
 app.use('/api/auth', require('./routes/authRoute'))
+app.use('/api/user', require('./routes/userRoute'))
 
 // Other code
 app.get("/", (req, res) => {

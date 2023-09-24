@@ -1,6 +1,7 @@
 const userModel = require('../models/User');
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+import type {Request, Response} from 'express';
 
 interface AuthRequest {
     body: {
@@ -13,7 +14,7 @@ interface AuthRequest {
 // (Code inspired by https://youtu.be/7ZEbBhDXk60)
 
 // Define controller methods
-const register = async (req: AuthRequest, res: any) => {
+const register = async (req: AuthRequest, res: Response) => {
   // Register user
   console.log("Register request")
 
@@ -28,7 +29,7 @@ const register = async (req: AuthRequest, res: any) => {
   })
 
   user.save().then((user: any) => {
-    
+
     const payload = {
         username: user.username,
         id: user._id,
