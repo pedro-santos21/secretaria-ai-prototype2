@@ -1,74 +1,67 @@
 const userModel = require('../models/User');
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-const { body, validationResult } = require('express-validator');
 
-interface RegisterRequest {
+interface AuthRequest {
     body: {
-      name: string;
+      username: string;
       email: string;
       password: string;
     };
   }
   
-
 // (Code inspired by https://youtu.be/7ZEbBhDXk60)
 
 // Define controller methods
-const register = async (req: RegisterRequest, res: any) => {
+const register = async (req: AuthRequest, res: any) => {
   // Register user
   console.log("Register request")
 
-  const { name, email, password } = req.body;
+  const { username, email, password } = req.body;
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const user = new userModel({
-    name,
-    email,
+    username: username,
+    email: email,
     password: hashedPassword
   })
 
   user.save().then((user: any) => {
+    
+    const payload = {
+        username: user.username,
+        id: user._id,
+      };
+  
+    const token = jwt.sign(payload, process.env.JWT_SECRET!, 
+    { expiresIn: process.env.JWT_TOKEN_DURATION_REGISTER });
+
     res.status(200).json({
         success:true,
         message: "User registered successfully",
         user: {
             id : user._id,
-            username : user.username
+            username : user.username,
+            token: `Bearer ${token}`
         }
-    }).then((user:any) => {
-        const payload = {
-            username: user.username,
-            id: user._id,
-          };
-      
-          const token = jwt.sign(payload, process.env.JWT_SECRET!, 
-            { expiresIn: process.env.JWT_TOKEN_DURATION_REGISTER });
     })
   }).catch((err: any) => {
     res.status(500).json({
         success:false,
-        message: "Something went wrong",
+        message: "Something went wrong. Error message: " + err,
         error: err
     })
   })
 };
 
-interface LoginRequest {
-    body: {
-      username: string;
-      password: string;
-    };
-}
-
-const login = async (req: LoginRequest, res: any) => {
+const login = async (req: AuthRequest, res: any) => {
     // Login user
     console.log("Login request")
     try {
-        const { username, password } = req.body;
+        const { username, email, password } = req.body;
 
-        const user = await userModel.findOne({ username });
+        const user = await userModel.findOne({ $or: [{ username }, { email }] });
 
         if (!user) {
             return res.status(401).json({

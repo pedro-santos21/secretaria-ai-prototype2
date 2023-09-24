@@ -5,6 +5,7 @@ const router = express.Router()
 // 3rd party Imports
 import mongoose from "mongoose";
 import cors from "cors";
+const bodyParser = require("body-parser");
 require('dotenv').config()
 const helmet = require('helmet')
 const session = require('express-session')
@@ -19,7 +20,7 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 app.use(helmet());
-//app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: false })); 
 
 //// Passport
 //app.use(passport.initialize());

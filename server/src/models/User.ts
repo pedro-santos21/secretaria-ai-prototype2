@@ -19,7 +19,9 @@ because passport-local-mongoose will do all that for us.
 const UserSchema = new Schema({   
     email: {type: String, required:true, unique:true},
     username : {type: String, unique: true, required:true},
-});
+    password: {type: String, required:true},
+    lastLogin: {type: Date, default:Date.now}
+}, { timestamps:true });
 
 
 // Documentation: https://www.npmjs.com/package/passport-local-mongoose
