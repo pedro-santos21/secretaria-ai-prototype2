@@ -1,19 +1,29 @@
-import express from "express";
+// Express Imports
+import express, {Request, Response} from "express";
+const router = express.Router()
+
+// 3rd party Imports
 import mongoose from "mongoose";
 import cors from "cors";
+import passport from "passport";
 require('dotenv').config()
 const helmet = require('helmet')
 
 const app = express();
-const port = 3000;
+const path = require('path');
+const port = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 app.use(helmet());
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Security
 app.disable('x-powered-by') // Reduce fingerpinting
+
+/// Passport.js
 
 // Database
 connectToDatabase().catch(err => console.log(err))
@@ -22,9 +32,14 @@ async function connectToDatabase() {
     console.log("+ Connected to MongoDB");
 }
 
+// Routes
+app.use('/', express.static(path.join(__dirname, 'public')))
+app.use('/', require('./routes/root'))
+app.use('/users', require('.routes/userRoutes'))
+
 app.get("/", (req, res) => {
     res.send("Hello World!");
-  });
+});
 
 app.listen(port, () => {
    console.info(`Backend server is listening on http://localhost:${port}`);
