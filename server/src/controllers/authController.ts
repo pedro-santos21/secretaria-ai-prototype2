@@ -2,6 +2,9 @@ const userModel = require('../models/User');
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 import type {Request, Response} from 'express';
+import { issueJWT, validatePassword } from '../lib/authUtils';
+const crypto = require('crypto');
+const authUtils = require('../lib/authUtils')
 
 interface AuthRequest {
     body: {
@@ -9,8 +12,8 @@ interface AuthRequest {
       email: string;
       password: string;
     };
-  }
-  
+}
+
 // (Code inspired by https://youtu.be/7ZEbBhDXk60)
 
 // Define controller methods
@@ -20,23 +23,18 @@ const register = async (req: AuthRequest, res: Response) => {
 
   const { username, email, password } = req.body;
 
-  const hashedPassword = await bcrypt.hash(password, 10);
+  const saltHash = await authUtils.genPassword(password);
 
   const user = new userModel({
     username: username,
     email: email,
-    password: hashedPassword
+    salt: saltHash.salt,
+    hash: saltHash.hash
   })
 
   user.save().then((user: any) => {
 
-    const payload = {
-        username: user.username,
-        id: user._id,
-      };
-  
-    const token = jwt.sign(payload, process.env.JWT_SECRET!, 
-    { expiresIn: process.env.JWT_TOKEN_DURATION_REGISTER });
+    const issuedJWT = authUtils.issueJWT(user);
 
     res.status(200).json({
         success:true,
@@ -44,7 +42,8 @@ const register = async (req: AuthRequest, res: Response) => {
         user: {
             id : user._id,
             username : user.username,
-            token: `Bearer ${token}`
+            token: issuedJWT.token,
+            expiresIn: issuedJWT.expires
         }
     })
   }).catch((err: any) => {
@@ -71,33 +70,27 @@ const login = async (req: AuthRequest, res: any) => {
             });
         }
 
-        const isPasswordValid = await bcrypt.compare(password, user.password);
+        const isPasswordValid = await authUtils.validatePassword(password, user.hash, user.salt)
 
         if (!isPasswordValid) {
             return res.status(401).json({
-            success: false,
-            message: 'Wrong password.',
+                success: false,
+                message: 'Wrong password.',
             });
         }
 
-        const payload = {
-            username: user.username,
-            id: user._id,
-        };
-
-        const token = jwt.sign(payload, process.env.JWT_SECRET, {
-            expiresIn: process.env.JWT_TOKEN_DURATION_LOGIN,
-        });
+        const issuedJWT = authUtils.issueJWT(user);
 
         return res.status(200).json({
             success: true,
-            message: 'User logged in successfully!',
-            token: `Bearer ${token}`,
+            message: 'User logged in successfully',
+            token: issuedJWT.token,
+            expiresIn: issuedJWT.expires
         });
-    } catch (err) {
+    }catch (err) {
         return res.status(500).json({
             success: false,
-            message: 'Something went wrong.',
+            message: "Something went wrong. Error message: " + err,
             error: err,
         });
     }

@@ -3,7 +3,6 @@ import express, {Request, Response} from "express";
 const router = express.Router()
 
 // 3rd party Imports
-import mongoose from "mongoose";
 import cors from "cors";
 const bodyParser = require("body-parser");
 const dotenv = require('dotenv')
@@ -11,9 +10,15 @@ dotenv.config()
 const helmet = require('helmet')
 const session = require('express-session')
 const passport = require('passport')
+const winston = require('winston');
+
 
 // My Imports
-import { startMongo } from "./config/database"
+require("./config/rsa").setupRSAKeyPaths().then(() => {
+  require('./config/passport')(passport);
+})
+import { printMongooseState, startMongo } from "./config/database"
+require('./models/User');
 
 const app = express();
 const path = require('path');
@@ -25,9 +30,8 @@ app.use(express.json());
 app.use(helmet());
 app.use(bodyParser.urlencoded({ extended: false })); 
 
-//// Passport
-//app.use(passport.initialize());
-//app.use(passport.session());
+// This will initialize the passport object on every request
+app.use(passport.initialize());
 
 //// Sessions
 /*app.use(
@@ -41,7 +45,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.disable('x-powered-by') // Reduce fingerpinting
 
 // Database
-startMongo();
+startMongo().then(() => {
+  printMongooseState();
+});
 
 // Routes
 const publicDir = path.join(__dirname, 'public')

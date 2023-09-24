@@ -25,7 +25,8 @@ export const ROLES = {
 const UserSchema = new Schema({   
     email: {type: String, required:true, unique:true},
     username : {type: String, unique: true, required:true},
-    password: {type: String, required:true},
+    hash: {type: String, required:true},
+    salt: {type: String, required:true},
     role: {type: String, enum: Object.values(ROLES), default:ROLES.Guest},
     lastLogin: {type: Date, default:Date.now}
 }, { timestamps:true });

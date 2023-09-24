@@ -32,7 +32,7 @@ export const startMongo = async () => {
     try {
         await mongoose.connect(String(dbConnection), {useNewUrlParser: true, useUnifiedTopology: true});
         console.log("+ Connecting to MongoDB...");
-        await mongoose.connection.on('connected', () => {
+        mongoose.connection.on('connected', () => {
             console.log('+ You are connected to MongoDB!');
         });
     } catch (error) {
@@ -41,7 +41,26 @@ export const startMongo = async () => {
     }
 }
 
+export const printMongooseState = async () => {
+    if (mongoose.connection.readyState === 1) {
+        console.log('+ Mongoose is connected to MongoDB!');
+        return 1;
+    } else if(mongoose.connection.readyState == 2){
+        console.log('+ Mongoose is connecting to MongoDB...');
+        return 2;
+    }  
+    else if(mongoose.connection.readyState == 3){
+        console.log('- Mongoose is disconnecting from MongoDB...');
+        return 3;
+    } 
+    else if(mongoose.connection.readyState == 4){
+        console.log('- Mongoose is disconnected from MongoDB!');
+        return 4;
+    }
+}
+
 module.exports = {
-    startMongo
+    startMongo,
+    printMongooseState
 };
   

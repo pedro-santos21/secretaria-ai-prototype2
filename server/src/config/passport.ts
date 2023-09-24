@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const User = require('mongoose').model('User');
 
-const pathToKey = path.join(__dirname, '..', 'id_rsa_pub.pem');
+const pathToKey = path.join(__dirname, '..', '..', '..', 'id_rsa_pub.pem');
 const PUB_KEY = fs.readFileSync(pathToKey, 'utf8');
 
 // At a minimum, you must pass the `jwtFromRequest` and `secretOrKey` properties
@@ -17,6 +17,9 @@ const options = {
 // app.js will pass the global passport object here, and this function will configure it
 module.exports = (passport:any) => {
     // The JWT payload is passed into the verify callback
+
+    console.log("* passport is being setup...")
+
     passport.use(new JwtStrategy(options, function(jwt_payload:any, done:any) {
 
         console.log(jwt_payload);
