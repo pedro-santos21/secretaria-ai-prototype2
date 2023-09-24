@@ -19,23 +19,19 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 app.use(helmet());
-app.use(express.urlencoded({ extended: true }));
+//app.use(express.urlencoded({ extended: true }));
 
 //// Passport
-app.use(passport.initialize());
-app.use(passport.session());
+//app.use(passport.initialize());
+//app.use(passport.session());
 
 //// Sessions
-app.use(
+/*app.use(
   session({
   secret: 'illuminati-party', //pick a random string to make the hash that is generated secure
   resave:false,
-  saveUnitialized:true
-}))
-app.use(function(req, res, next) {
-  console.log('Session:', req.session);
-  next();
-});
+  saveUninitialized:true
+}))*/
 
 // Security
 app.disable('x-powered-by') // Reduce fingerpinting
@@ -53,7 +49,7 @@ app.use('/', express.static(publicDir))
 
 //app.use('/', require('./routes/root'))
 //app.use('/users', require('./routes/userRoute'))
-app.use('/auth', require('./routes/authRoute'))
+app.use('/api/auth', require('./routes/authRoute'))
 
 // Other code
 app.get("/", (req, res) => {

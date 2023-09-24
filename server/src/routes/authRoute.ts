@@ -6,7 +6,10 @@ const router = express.Router();
 const controller = require('../controllers/authController');
 
 // Define the routes
-router.get('/register', controller.register);
-router.get('/register', controller.login);
+router.post('/register', controller.register);
+router.post('/login', controller.login);
+router.get('/test', (req:any, res:any) => {
+    res.send("Hello!")
+})
 
 module.exports = router;
