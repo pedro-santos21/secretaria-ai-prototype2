@@ -15,6 +15,7 @@ const options = {
 
 // app.js will pass the global passport object here, and this function will configure it
 module.exports = (passport:any) => {
+    
     // The JWT payload is passed into the verify callback
 
     console.log("! passport is being setup...")

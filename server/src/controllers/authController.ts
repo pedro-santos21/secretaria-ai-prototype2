@@ -1,9 +1,5 @@
 const userModel = require('../models/User');
-const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken')
 import type {Request, Response} from 'express';
-import { issueJWT, validatePassword } from '../lib/authUtils';
-const crypto = require('crypto');
 const authUtils = require('../lib/authUtils')
 
 interface AuthRequest {

@@ -2,6 +2,7 @@ const crypto = require('crypto');
 const jsonwebtoken = require('jsonwebtoken');
 const fs = require('fs');
 const path = require('path');
+const User = require('../models/User');
 
 const pathToKey = path.join(__dirname, '..', '..', 'id_rsa_priv.pem');
 const PRIV_KEY = fs.readFileSync(pathToKey, 'utf8');
@@ -76,8 +77,26 @@ export function issueJWT(user: any, expiresIn: string = defaultJWTExpiresIn) {
     }
 }
 
+const privileged_roles:any = process.env.PRIVILEGED_ROLES;
+
+// Middleware function to check user role
+export const checkIfPrivilegedRole = (user:any) => {
+  const userRole = user.role;
+
+  console.log("@ Checking if user has privileged role...")
+  
+  if (Object.values(privileged_roles).includes(userRole)) {
+    console.log("@ User is privileged!")
+    return true;
+  } else {
+    console.log("@ User is not privileged!")
+    return false;
+  }
+};
+
 module.exports = {
     genPassword,
     validatePassword,
-    issueJWT
+    issueJWT,
+    checkIfPrivilegedRole
 };

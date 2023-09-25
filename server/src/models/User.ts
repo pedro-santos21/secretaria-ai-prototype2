@@ -1,8 +1,6 @@
 // importing modules
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-
-const passportLocalMongoose = require('passport-local-mongoose');
   
 /* 
 
@@ -17,9 +15,10 @@ because passport-local-mongoose will do all that for us.
 */
 
 export const ROLES = {
-    Admin: "Admin",
-    Customer: "Customer",
-    Guest: "Guest"
+    Admin: "admin",
+    Moderator: "moderator",
+    Customer: "customer",
+    Guest: "guest"
 }
 
 const UserSchema = new Schema({   
@@ -31,13 +30,5 @@ const UserSchema = new Schema({
     lastLogin: {type: Date, default:Date.now}
 }, { timestamps:true });
 
-
-// Documentation: https://www.npmjs.com/package/passport-local-mongoose
-
-const passportOptions = {};
-
-// plugin for passport-local-mongoose
-UserSchema.plugin(passportLocalMongoose, passportOptions);
-  
 // export userschema
 module.exports = mongoose.model("User", UserSchema);

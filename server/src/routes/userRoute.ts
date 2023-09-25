@@ -1,12 +1,15 @@
 import { Router } from 'express'
 import { getAllUsers } from '../controllers/userController'
 import passport from "passport";
+import { checkIfPrivilegedRole } from '../lib/authUtils';
 
 const router = Router()
 
-// define your routes here
+// Routes
 router.get('/users', 
-passport.authenticate('jwt', { session: false }), (req, res) => {
+passport.authenticate('jwt', { session: false }), (req, res, next) => {
+    const user = req.user;
+    checkIfPrivilegedRole(user)
     getAllUsers(req, res)
 })
 router.get('/test', (req:any, res:any) => {
